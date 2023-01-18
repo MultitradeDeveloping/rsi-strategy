@@ -1,0 +1,38 @@
+
+strategy("rsi", overlay=true,initial_capital = 10, default_qty_type = strategy.percent_of_equity, default_qty_value = 10, margin_long=100, margin_short=100, max_bars_back=2880, pyramiding = 100, commission_value = 0.15)
+y = input(2023, title = 'год начала')
+m = input(1, title = 'месяц начала')
+d = input(18, title = 'день начала')
+start = timestamp(y, m, d, 12, 00)
+trig = time > start ? true : false
+
+// 14-20-50-100-100 on 15m-tf
+period = input(14, title = 'period')
+oversold = input(20, title = 'oversold')
+closelong = input(50, 'closelong')
+overbought = input(100, title = 'overbought')
+closeshort = input(100, 'closeshort')
+
+
+
+// overbought = 80
+lc = ta.rsi(close, period) < oversold
+
+// lc3 = close < ta.sma(close, ma2) * 1.2
+if (lc)
+    strategy.entry("Long", strategy.long)
+
+
+
+sc = ta.rsi(close, period) > overbought
+if(sc)
+    strategy.entry("Short", strategy.short)
+
+
+
+cc = ta.rsi(close, period) > closelong
+if(cc)
+    strategy.close('Long')
+ccii = ta.rsi(close, period) < closeshort
+if(ccii)    
+    strategy.close('Short')
